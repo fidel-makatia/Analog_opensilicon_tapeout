@@ -1,0 +1,52 @@
+* ============================================================================
+* Single-Stage OTA - SKY130 PDK
+* ============================================================================
+* Architecture: NMOS diff pair + PMOS current mirror load + tail bias mirror
+*
+* Ports:
+*   VINP  - positive differential input
+*   VINN  - negative differential input
+*   VOUT  - single-ended output
+*   VDD   - positive supply (1.8V)
+*   VSS   - ground
+*   IREF  - external reference current input (10uA sink)
+*
+* Transistor Summary:
+*   M1 (NMOS 10u/1u nf=2): diff pair +, drain=D_M3, gate=VINP, source=VTAIL
+*   M2 (NMOS 10u/1u nf=2): diff pair -, drain=VOUT, gate=VINN, source=VTAIL
+*   M3 (PMOS 20u/1u nf=4): active load diode, drain=gate=D_M3, source=VDD
+*   M4 (PMOS 20u/1u nf=4): active load mirror, drain=VOUT, gate=D_M3, source=VDD
+*   M5 (NMOS 8u/2u):  tail current source, drain=VTAIL, gate=VBIAS, source=VSS
+*   M6 (NMOS 8u/2u):  bias mirror diode, drain=gate=VBIAS, source=VSS
+* ============================================================================
+
+.subckt ota VINP VINN VOUT VDD VSS IREF
+
+* ---- NMOS Differential Input Pair ----
+* M1: W=10u (2 fingers x 5u), L=1.0u
+XM1 D_M3 VINP VTAIL VSS sky130_fd_pr__nfet_01v8 L=1.0 W=5 nf=2 m=1
+
+* M2: W=10u (2 fingers x 5u), L=1.0u
+XM2 VOUT VINN VTAIL VSS sky130_fd_pr__nfet_01v8 L=1.0 W=5 nf=2 m=1
+
+* ---- PMOS Current Mirror Active Load ----
+* M3: W=20u (4 fingers x 5u), L=1.0u, diode-connected
+XM3 D_M3 D_M3 VDD VDD sky130_fd_pr__pfet_01v8 L=1.0 W=5 nf=4 m=1
+
+* M4: W=20u (4 fingers x 5u), L=1.0u
+XM4 VOUT D_M3 VDD VDD sky130_fd_pr__pfet_01v8 L=1.0 W=5 nf=4 m=1
+
+* ---- NMOS Tail Current Source ----
+* M5: W=8u, L=2.0u
+XM5 VTAIL VBIAS VSS VSS sky130_fd_pr__nfet_01v8 L=2.0 W=8 nf=1 m=1
+
+* ---- NMOS Bias Reference Mirror (diode-connected) ----
+* M6: W=8u, L=2.0u, gate tied to drain
+XM6 VBIAS VBIAS VSS VSS sky130_fd_pr__nfet_01v8 L=2.0 W=8 nf=1 m=1
+
+* ---- External current connection ----
+* IREF pin sinks current through M6 to set VBIAS
+* The external current source pulls 10uA from IREF/VBIAS node
+.connect IREF VBIAS
+
+.ends ota

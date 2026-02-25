@@ -1,0 +1,52 @@
+yaml_version: 6
+
+project:
+  title: "Single-Stage OTA (Operational Transconductance Amplifier)"
+  author: "Fidel Makatia"
+  discord: ""
+  description: "6-transistor single-stage OTA with NMOS diff pair, PMOS current mirror load, and external bias mirror using SKY130"
+  language: "Analog"
+  clock_hz: 0
+
+  tiles: "1x2"
+  analog_pins: 4
+  top_module: "tt_um_fidel_makatia_analog_ota"
+
+  source_files:
+    - "project.v"
+
+pinout:
+  ui:
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+  uo:
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+  uio:
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+    - ""
+  ua:
+    - "VIN+ (positive differential input)"
+    - "VIN- (negative differential input)"
+    - "VOUT (single-ended output)"
+    - "IREF (external 10uA reference current)"
+    - ""
+    - ""

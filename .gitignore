@@ -1,0 +1,39 @@
+# Simulation outputs
+outputs/*.log
+outputs/*.csv
+outputs/*.txt
+outputs/*.spice
+
+# Magic intermediates
+mag/*.ext
+mag/*.sim
+mag/*.nodes
+mag/*.res.ext
+
+# GDS (generated)
+gds/*.gds
+
+# xschem intermediates
+xschem/*.raw
+xschem/*.log
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.pdf
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk

@@ -1,0 +1,7 @@
+# xschemrc for SKY130 OTA project
+# Set PDK_ROOT environment variable before launching xschem
+set PDK_ROOT $env(PDK_ROOT)
+set PDK sky130A
+
+# Source the SKY130 xschem configuration
+source $PDK_ROOT/$PDK/libs.tech/xschem/xschemrc

@@ -1,0 +1,50 @@
+* ============================================================================
+* OTA Operating Point Testbench
+* ============================================================================
+* Checks DC bias of all transistors at balanced common-mode input
+*
+* Usage: ngspice -b ota_tb_op.spice
+* ============================================================================
+
+.lib $PDK_ROOT/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.include "ota.spice"
+
+* ---- Power Supply ----
+VDD VDD 0 1.8
+VSS VSS 0 0
+
+* ---- Common-mode input at mid-rail ----
+VINP VINP 0 0.9
+VINN VINN 0 0.9
+
+* ---- External reference current (10uA from VDD into IREF node) ----
+IIREF IREF VSS 10u
+
+* ---- Instantiate OTA ----
+XOTA VINP VINN VOUT VDD VSS IREF ota
+
+* ---- Operating Point Analysis ----
+.control
+  op
+  echo ""
+  echo "============================================================"
+  echo "  OTA Operating Point Results"
+  echo "============================================================"
+  echo ""
+  echo "--- Node Voltages ---"
+  print v(VDD) v(VOUT) v(VINP) v(VINN)
+  print v(XOTA.VBIAS) v(XOTA.VTAIL) v(XOTA.D_M3)
+  echo ""
+  echo "--- Branch Currents ---"
+  print @IIREF[i]
+  echo ""
+  echo "--- Expected ---"
+  echo "  VOUT ~ 0.9V (mid-rail at balanced input)"
+  echo "  VBIAS ~ 0.5-0.7V (NMOS threshold region)"
+  echo "  Tail current ~ 10uA, branch currents ~ 5uA each"
+  echo "============================================================"
+  quit
+.endc
+
+.end

@@ -1,0 +1,50 @@
+* ============================================================================
+* OTA DC Transfer Curve Testbench
+* ============================================================================
+* Sweeps VIN+ to characterize output swing and gain
+*
+* Usage: ngspice -b ota_tb_dc.spice
+* ============================================================================
+
+.lib $PDK_ROOT/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.include "ota.spice"
+
+* ---- Power Supply ----
+VDD VDD 0 1.8
+VSS VSS 0 0
+
+* ---- Input: sweep VIN+, hold VIN- at 0.9V ----
+VINP VINP 0 0.9
+VINN VINN 0 0.9
+
+* ---- External reference current ----
+IIREF IREF VSS 10u
+
+* ---- Instantiate OTA ----
+XOTA VINP VINN VOUT VDD VSS IREF ota
+
+* ---- DC Sweep Analysis ----
+.dc VINP 0.3 1.5 0.001
+
+.control
+  run
+  echo ""
+  echo "============================================================"
+  echo "  OTA DC Transfer Curve Results"
+  echo "============================================================"
+
+  * Measure output swing
+  meas dc vout_max max v(VOUT)
+  meas dc vout_min min v(VOUT)
+  echo ""
+
+  * Save data
+  wrdata ../outputs/dc_transfer.csv v(VOUT)
+
+  echo "  Output data saved to outputs/dc_transfer.csv"
+  echo "============================================================"
+  quit
+.endc
+
+.end
