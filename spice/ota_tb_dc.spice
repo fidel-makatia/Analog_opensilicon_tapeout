@@ -18,8 +18,8 @@ VSS VSS 0 0
 VINP VINP 0 0.9
 VINN VINN 0 0.9
 
-* ---- External reference current ----
-IIREF IREF VSS 10u
+* ---- External reference current (10uA from VDD into IREF node) ----
+IIREF VDD IREF 10u
 
 * ---- Instantiate OTA ----
 XOTA VINP VINN VOUT VDD VSS IREF ota

@@ -18,8 +18,10 @@ VSS VSS 0 0
 VINP VINP 0 0.9
 VINN VINN 0 0.9
 
-* ---- External reference current (10uA from VDD into IREF node) ----
-IIREF IREF VSS 10u
+* ---- External reference current (10uA sinking from IREF to ground) ----
+* Current flows: VDD -> R(external) -> IREF pin -> M6 -> VSS
+* Model as ideal current source pulling from VDD into IREF node
+IIREF VDD IREF 10u
 
 * ---- Instantiate OTA ----
 XOTA VINP VINN VOUT VDD VSS IREF ota
@@ -37,7 +39,8 @@ XOTA VINP VINN VOUT VDD VSS IREF ota
   print v(XOTA.VBIAS) v(XOTA.VTAIL) v(XOTA.D_M3)
   echo ""
   echo "--- Branch Currents ---"
-  print @IIREF[i]
+  print @IIREF[c]
+  print i(VDD)
   echo ""
   echo "--- Expected ---"
   echo "  VOUT ~ 0.9V (mid-rail at balanced input)"

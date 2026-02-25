@@ -46,7 +46,7 @@ XM6 VBIAS VBIAS VSS VSS sky130_fd_pr__nfet_01v8 L=2.0 W=8 nf=1 m=1
 
 * ---- External current connection ----
 * IREF pin sinks current through M6 to set VBIAS
-* The external current source pulls 10uA from IREF/VBIAS node
-.connect IREF VBIAS
+* Zero-volt source shorts IREF to VBIAS (ngspice-compatible)
+VIREF_SHORT IREF VBIAS 0
 
 .ends ota
