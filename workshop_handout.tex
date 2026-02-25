@@ -1,0 +1,197 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\title{\textbf{3-Session Digital IC Tapeout Workshop}\\
+Simplified 8-bit Microcontroller using SKY130}
+\author{Instructor Notes + Student Handout}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Workshop Objective}
+
+This workshop introduces participants to a modern digital ASIC flow by taping out a simplified 8-bit microcontroller using open-source tools and an open CPU core.
+
+Participants will:
+\begin{itemize}
+  \item Modify an existing CPU core (not design from scratch)
+  \item Simulate and verify RTL
+  \item Run synthesis, place-and-route, and DRC/LVS
+  \item Export a GDS ready for fabrication
+\end{itemize}
+
+The emphasis is on \textbf{flow comprehension and tapeout success}, not performance optimization.
+
+\section{Design Philosophy}
+
+To fit within 3 sessions (2 hours each), the design is intentionally constrained:
+
+\begin{itemize}
+  \item Use an existing open CPU core
+  \item Freeze the architecture
+  \item Limit student changes to safe, local modifications
+  \item Fully script backend flows
+\end{itemize}
+
+Students will \textbf{modify and tape out}, not architect a CPU.
+
+\section{CPU Options}
+
+Two supported cores are provided. The instructor selects one.
+
+\subsection{Option A: PicoRV8 (Simplified RISC-V)}
+
+\begin{itemize}
+  \item Cut-down RISC-V-like core
+  \item 8-bit datapath
+  \item Hard-coded program ROM
+  \item GPIO-only output
+\end{itemize}
+
+\subsection{Option B: 8-bit Accumulator Machine}
+
+\begin{itemize}
+  \item Custom educational CPU
+  \item Accumulator-based ISA
+  \item Minimal control logic
+  \item Easiest to understand and debug
+\end{itemize}
+
+\noindent\textbf{Recommendation:} Option B for mixed audiences, Option A for RTL-savvy audiences.
+
+\section{Frozen Architecture}
+
+The following blocks are frozen and must not be modified:
+
+\begin{itemize}
+  \item Program counter
+  \item Instruction decoder
+  \item Clock/reset logic
+  \item Top-level SoC wrapper
+\end{itemize}
+
+Students are allowed to modify:
+\begin{itemize}
+  \item ALU logic
+  \item GPIO behavior
+  \item Instruction behavior (within bounds)
+  \item Program ROM contents
+\end{itemize}
+
+\section{Target Chip Characteristics}
+
+\begin{itemize}
+  \item Process: SKY130 (130 nm CMOS)
+  \item Clock frequency: $\leq$ 5 MHz
+  \item Area target: $\ll$ 1 mm$^2$
+  \item Power: not constrained
+\end{itemize}
+
+\section{Toolchain Overview}
+
+\begin{itemize}
+  \item RTL simulation: Icarus Verilog
+  \item Synthesis: Yosys
+  \item Place \& Route: OpenROAD
+  \item DRC/LVS: Magic + netgen
+  \item Tapeout: SKY130 MPW or TinyTapeout
+\end{itemize}
+
+\section{Repository Structure}
+
+Students are given a prepared Git repository with the following structure:
+
+\begin{verbatim}
+digital_tapeout_workshop/
+├── rtl/
+│   ├── core/
+│   │   ├── alu.v
+│   │   ├── regfile.v
+│   │   └── control.v
+│   ├── soc_top.v
+│   └── gpio.v
+├── tb/
+│   └── soc_tb.v
+├── rom/
+│   └── program.hex
+├── constraints/
+│   └── sky130.sdc
+├── flow/
+│   ├── synth.tcl
+│   ├── floorplan.tcl
+│   └── pnr.tcl
+├── outputs/
+│   ├── netlist.v
+│   └── chip.gds
+└── README.md
+\end{verbatim}
+
+Only files in \texttt{rtl/core/} and \texttt{rom/} are modified by students.
+
+\section{3-Session Lesson Plan (2 Hours Each)}
+
+\subsection*{Session 1: RTL Understanding and Simulation}
+\textbf{Tools: Verilog, Icarus Verilog}
+
+\begin{itemize}
+  \item CPU architecture walkthrough
+  \item Instruction execution overview
+  \item Modify ALU or GPIO logic
+  \item Modify program ROM
+  \item Run RTL simulation
+\end{itemize}
+
+\noindent\textbf{Deliverable:} Passing testbench
+
+\subsection*{Session 2: Synthesis and Place \& Route}
+\textbf{Tools: Yosys, OpenROAD}
+
+\begin{itemize}
+  \item RTL synthesis to gates
+  \item Gate count inspection
+  \item Floorplanning (scripted)
+  \item Placement and routing
+  \item Timing check (low-frequency)
+\end{itemize}
+
+\noindent\textbf{Deliverable:} Routed design
+
+\subsection*{Session 3: Verification and Tapeout}
+\textbf{Tools: OpenROAD, Magic, netgen}
+
+\begin{itemize}
+  \item DRC and LVS (scripted)
+  \item GDS export
+  \item Visual inspection of layout
+  \item Tapeout submission
+  \item Discussion of silicon risks
+\end{itemize}
+
+\noindent\textbf{Deliverable:} Final GDS
+
+\section{Key Teaching Constraints}
+
+\begin{itemize}
+  \item No free-form RTL creation
+  \item No clock gating
+  \item No asynchronous logic
+  \item No performance optimization
+\end{itemize}
+
+These constraints are enforced to guarantee tapeout success.
+
+\section{Final Message to Participants}
+
+\begin{quote}
+``You are not building a product CPU.
+You are learning how real chips become silicon.''
+\end{quote}
+
+\end{document}
