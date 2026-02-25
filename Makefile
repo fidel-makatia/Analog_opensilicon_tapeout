@@ -18,6 +18,9 @@
 #   make all          # Complete flow
 #
 # Utilities:
+#   make plot         # Generate all plots (requires matplotlib)
+#   make plot_dc      # Plot DC transfer curve
+#   make plot_ac      # Plot AC Bode plot
 #   make check_tools  # Verify tool installation
 #   make clean        # Remove generated files
 #   make help         # Show this help
@@ -32,7 +35,7 @@ NETGEN   ?= netgen
 
 MAGIC_RC = $(PDK_ROOT)/sky130A/libs.tech/magic/sky130A.magicrc
 
-.PHONY: all sim sim_op sim_dc sim_ac layout gds drc extract lvs clean help check_tools
+.PHONY: all sim sim_op sim_dc sim_ac plot plot_dc plot_ac layout gds drc extract lvs clean help check_tools
 
 all: sim
 	@echo ""
@@ -52,6 +55,11 @@ help:
 	@echo "    make sim_dc      - DC transfer curve"
 	@echo "    make sim_ac      - AC gain/phase (Bode plot)"
 	@echo "    make sim         - Run all simulations"
+	@echo ""
+	@echo "  Plotting (requires python3 + matplotlib):"
+	@echo "    make plot        - Generate all plots (DC + AC)"
+	@echo "    make plot_dc     - Plot DC transfer curve"
+	@echo "    make plot_ac     - Plot AC Bode plot (gain + phase)"
 	@echo ""
 	@echo "  Layout & Verification (requires Magic + netgen):"
 	@echo "    make layout      - Generate layout skeleton"
@@ -100,6 +108,21 @@ sim_ac:
 	cd spice && $(NGSPICE) -b ota_tb_ac.spice 2>&1 | tee ../outputs/sim_ac.log
 	@echo ""
 
+# ---- Plotting ----
+plot: plot_dc plot_ac
+	@echo ""
+	@echo "All plots generated. Check outputs/ for PNG files."
+
+plot_dc:
+	@echo "========== Plotting DC Transfer Curve =========="
+	python3 scripts/plot_dc.py
+	@echo ""
+
+plot_ac:
+	@echo "========== Plotting AC Bode Plot =========="
+	python3 scripts/plot_ac.py
+	@echo ""
+
 # ---- Layout ----
 layout:
 	@echo "========== Generating Layout Skeleton =========="
@@ -132,7 +155,7 @@ lvs: extract
 
 # ---- Clean ----
 clean:
-	rm -f outputs/*.log outputs/*.csv outputs/*.txt outputs/*.spice
+	rm -f outputs/*.log outputs/*.csv outputs/*.txt outputs/*.spice outputs/*.png
 	rm -f mag/*.ext mag/*.sim mag/*.nodes
 	rm -f gds/*.gds
 	@echo "Cleaned all generated files."

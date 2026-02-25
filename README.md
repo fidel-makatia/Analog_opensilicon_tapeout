@@ -61,10 +61,27 @@ A 6-transistor single-stage Operational Transconductance Amplifier (OTA):
 
 ### Run Simulations
 ```bash
+export PDK_ROOT=~/pdk              # set your SKY130 PDK path
 make sim_op    # Operating point
 make sim_dc    # DC transfer curve
 make sim_ac    # AC gain/phase Bode plot
 make sim       # All simulations
+```
+
+### Plot Results
+```bash
+pip3 install matplotlib numpy      # one-time setup
+make plot      # Generate all plots (DC + AC)
+make plot_dc   # DC transfer curve only
+make plot_ac   # AC Bode plot only
+```
+Plots are saved to `outputs/dc_transfer.png` and `outputs/ac_bode.png`.
+
+You can also plot interactively in ngspice:
+```bash
+cd spice
+ngspice ota_tb_dc.spice            # then: run; plot v(VOUT) vs v(VINP)
+ngspice ota_tb_ac.spice            # then: run; plot vdb(VOUT); plot vp(VOUT)
 ```
 
 ### Full Backend Flow
